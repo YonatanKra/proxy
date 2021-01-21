@@ -19,7 +19,7 @@ app.all('*', async function (req, res, next) {
         // CORS Preflight
         res.send();
     } else {
-        
+
         const response = await fetch('https://tastedive.com/api/similar?k=400035-demoonco-HTILT578&type=movie&info=1&q=star');
         const data = await response.json();
         res.json(data);
