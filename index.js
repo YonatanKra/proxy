@@ -1,5 +1,5 @@
-var express = require('express'),
-    request = require('request'),
+const express = require('express'),
+    fetch = require('node-fetch'),
     bodyParser = require('body-parser'),
     app = express();
 
@@ -8,7 +8,7 @@ console.log('Using limit: ', myLimit);
 
 app.use(bodyParser.json({limit: myLimit}));
 
-app.all('*', function (req, res, next) {
+app.all('*', async function (req, res, next) {
 
     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment
     res.header("Access-Control-Allow-Origin", "*");
@@ -19,18 +19,10 @@ app.all('*', function (req, res, next) {
         // CORS Preflight
         res.send();
     } else {
-        var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com
-        if (!targetURL) {
-            res.send(500, { error: 'There is no Target-Endpoint header in the request' });
-            return;
-        }
-        request({ url: targetURL + req.url, method: req.method, json: req.body, headers: {'Authorization': req.header('Authorization')} },
-            function (error, response, body) {
-                if (error) {
-                    console.error('error: ' + response.statusCode)
-                }
-//                console.log(body);
-            }).pipe(res);
+        
+        const response = await fetch('https://tastedive.com/api/similar?k=400035-demoonco-HTILT578&type=movie&info=1&q=star');
+        const data = await response.json();
+        res.json(data);
     }
 });
 
